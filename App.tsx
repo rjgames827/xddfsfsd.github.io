@@ -137,7 +137,7 @@ const getInitialCategory = (): Category => {
   if (validCategories.includes(normalizedPath)) {
     return normalizedPath;
   }
-  return 'chat';
+  return 'dev';
 };
 
 const App: React.FC = () => {
@@ -212,14 +212,14 @@ const App: React.FC = () => {
     const path = window.location.pathname.substring(1).toLowerCase().replace('-', ' ');
     
     if (user) {
-      // If logged in and on root, go to chat
+      // If logged in and on root, go to dev
       if (path === '') {
-        navigate('chat');
+        navigate('dev');
       }
     } else {
-      // If not logged in and on root or landing on 'chat', go to chat and open auth modal
-      if (path === '' || path === 'chat') {
-        navigate('chat');
+      // If not logged in and on root or landing on 'dev', go to dev and open auth modal
+      if (path === '' || path === 'dev') {
+        navigate('dev');
         // Automatically open auth modal for guests
         setIsAuthModalOpen(true);
       }
@@ -434,7 +434,7 @@ const App: React.FC = () => {
       if (validCategories.includes(normalizedPath)) {
         setActiveCategory(normalizedPath);
       } else {
-        setActiveCategory('chat');
+        setActiveCategory('dev');
       }
     };
     window.addEventListener('popstate', handlePopState);
