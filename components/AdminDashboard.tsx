@@ -106,6 +106,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose, isSuperAdmin, 
     if (activeTab === 'analytics' || activeTab === 'upload') return;
 
     setIsLoading(true);
+    setError(null); // Clear previous errors
     let unsubscribe: () => void = () => {};
 
     try {
@@ -115,7 +116,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose, isSuperAdmin, 
           console.log(`[AdminDashboard] Announcements snapshot received: ${snapshot.size} docs`);
           setAnnouncements(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Announcement[]);
           setIsLoading(false);
+          setError(null);
         }, (err) => {
+          console.error('[AdminDashboard] Announcements error:', err);
+          setError('Permission denied. Please update Firestore rules to grant admin access.');
           handleFirestoreError(err, OperationType.LIST, 'site_announcements');
           setIsLoading(false);
         });
@@ -125,7 +129,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose, isSuperAdmin, 
           console.log(`[AdminDashboard] Suggestions snapshot received: ${snapshot.size} docs`);
           setSuggestions(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Suggestion[]);
           setIsLoading(false);
+          setError(null);
         }, (err) => {
+          console.error('[AdminDashboard] Suggestions error:', err);
+          setError('Permission denied. Please update Firestore rules to grant admin access.');
           handleFirestoreError(err, OperationType.LIST, 'suggestions');
           setIsLoading(false);
         });
@@ -135,7 +142,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose, isSuperAdmin, 
           console.log(`[AdminDashboard] AllowedAdmins snapshot received: ${snapshot.size} docs`);
           setAllowedAdmins(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as AllowedAdmin[]);
           setIsLoading(false);
+          setError(null);
         }, (err) => {
+          console.error('[AdminDashboard] AllowedAdmins error:', err);
+          setError('Permission denied. Please update Firestore rules to grant admin access.');
           handleFirestoreError(err, OperationType.LIST, 'allowed_admins');
           setIsLoading(false);
         });
@@ -149,7 +159,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose, isSuperAdmin, 
             ...doc.data() 
           })) as User[]);
           setIsLoading(false);
+          setError(null);
         }, (err) => {
+          console.error('[AdminDashboard] Users error:', err);
+          setError('Permission denied. Please update Firestore rules to grant admin access.');
           handleFirestoreError(err, OperationType.LIST, 'users');
           setIsLoading(false);
         });
@@ -159,7 +172,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ onClose, isSuperAdmin, 
           console.log(`[AdminDashboard] Appeals snapshot received: ${snapshot.size} docs`);
           setAppeals(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Appeal[]);
           setIsLoading(false);
+          setError(null);
         }, (err) => {
+          console.error('[AdminDashboard] Appeals error:', err);
+          setError('Permission denied. Please update Firestore rules to grant admin access.');
           handleFirestoreError(err, OperationType.LIST, 'appeals');
           setIsLoading(false);
         });

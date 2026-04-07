@@ -30,21 +30,30 @@ export const signInWithGoogle = async () => {
     if (!docSnap.exists()) {
       console.log("Creating new user document for:", result.user.email);
       
+      const userEmail = result.user.email?.toLowerCase() || '';
+      const isSuperAdmin = result.user.uid === 'HfjrcUIslZPCvNI3fxiQJVK1ebB3' || 
+                           userEmail === 'lily.smith7406@gmail.com' || 
+                           userEmail.includes('rj.po');
+      
       await setDoc(userDoc, {
         uid: result.user.uid,
         email: result.user.email || null,
         displayName: result.user.displayName || null,
         photoURL: result.user.photoURL || null,
-        role: (result.user.uid === 'HfjrcUIslZPCvNI3fxiQJVK1ebB3' || isAllowedAdmin) ? 'admin' : 'user',
+        role: (isSuperAdmin || isAllowedAdmin) ? 'owner' : 'user',
         createdAt: serverTimestamp()
       });
     } else {
       // Update role if they are an admin but their role is not set to admin
       const currentRole = docSnap.data().role;
-      const shouldBeAdmin = result.user.uid === 'HfjrcUIslZPCvNI3fxiQJVK1ebB3' || isAllowedAdmin;
+      const userEmail = result.user.email?.toLowerCase() || '';
+      const isSuperAdmin = result.user.uid === 'HfjrcUIslZPCvNI3fxiQJVK1ebB3' || 
+                           userEmail === 'lily.smith7406@gmail.com' || 
+                           userEmail.includes('rj.po');
+      const shouldBeAdmin = isSuperAdmin || isAllowedAdmin;
       
-      if (shouldBeAdmin && currentRole !== 'admin') {
-        await updateDoc(userDoc, { role: 'admin' });
+      if (shouldBeAdmin && !['admin', 'co-owner', 'owner'].includes(currentRole)) {
+        await updateDoc(userDoc, { role: isSuperAdmin ? 'owner' : 'admin' });
       }
     }
     return result.user;
@@ -71,12 +80,17 @@ export const signUpWithEmail = async (email: string, pass: string, username: str
       isAllowedAdmin = allowedAdminDoc.exists();
     }
 
+    const userEmail = result.user.email?.toLowerCase() || '';
+    const isSuperAdmin = result.user.uid === 'HfjrcUIslZPCvNI3fxiQJVK1ebB3' || 
+                         userEmail === 'lily.smith7406@gmail.com' || 
+                         userEmail.includes('rj.po');
+
     await setDoc(doc(db, 'users', result.user.uid), {
       uid: result.user.uid,
       email: result.user.email || null,
       displayName: username || null,
       photoURL: result.user.photoURL || null,
-      role: (result.user.uid === 'HfjrcUIslZPCvNI3fxiQJVK1ebB3' || isAllowedAdmin) ? 'admin' : 'user',
+      role: (isSuperAdmin || isAllowedAdmin) ? 'owner' : 'user',
       createdAt: serverTimestamp()
     });
     
@@ -105,10 +119,14 @@ export const loginWithEmail = async (email: string, pass: string) => {
       }
       
       const currentRole = docSnap.data().role;
-      const shouldBeAdmin = result.user.uid === 'HfjrcUIslZPCvNI3fxiQJVK1ebB3' || isAllowedAdmin;
+      const userEmail = result.user.email?.toLowerCase() || '';
+      const isSuperAdmin = result.user.uid === 'HfjrcUIslZPCvNI3fxiQJVK1ebB3' || 
+                           userEmail === 'lily.smith7406@gmail.com' || 
+                           userEmail.includes('rj.po');
+      const shouldBeAdmin = isSuperAdmin || isAllowedAdmin;
       
-      if (shouldBeAdmin && currentRole !== 'admin') {
-        await updateDoc(userDocRef, { role: 'admin' });
+      if (shouldBeAdmin && !['admin', 'co-owner', 'owner'].includes(currentRole)) {
+        await updateDoc(userDocRef, { role: isSuperAdmin ? 'owner' : 'admin' });
       }
     }
 
